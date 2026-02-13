@@ -2,6 +2,49 @@ import supabase from "./supabase.js";
 var cardBg;
 var editId;
 
+
+async function searchPosts() {
+  let searchValue = document.getElementById("searchValue").value
+  var posts = document.getElementById("posts");
+  posts.innerHTML = "" // clear posts before displaying search results
+  try {
+    let query = supabase.from("post").select("*").order('id', { ascending: false })
+    if(searchValue.trim()) {
+      // query = query.ilike("title",`%${searchValue}%`)    
+      query = query.or(`title.ilike.%${searchValue}%, description.ilike.%${searchValue}%`) 
+    }
+    const {data , error}= await query
+    console.log(data);
+    if(data.length===0){
+      posts.innerHTML= `<h4>No Posts Found </h4>`
+      alert("No posts found")
+    }
+    data.forEach((post) => {
+      var posts = document.getElementById("posts");
+      posts.innerHTML += `
+            <div class="card m-2">
+              <div class="card-header">@Post ${post.id}</div>
+              <div style="background-image: url(${post.img_url});"  class="card-body">
+                <h5 class="card-title">${post.title}</h5>
+                <p class="card-text">${post.description}</p>
+              </div>
+              <div class="ms-auto m-2">
+                  <button onclick="editPost(event, ${post.id})" class="btn btn-success">Edit</button>
+                  <button onclick="deletePost(event, ${post.id})" class="btn btn-danger">Delete</button>
+               </div>
+            </div>
+            `;
+    });
+    if(error)console.log("Search error",error);
+    
+    
+
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
 //Get (fetch) all posts from supabase and display on page load
 window.addEventListener("DOMContentLoaded", async () => {
   try {
@@ -116,3 +159,4 @@ window.deletePost = deletePost;
 window.editPost = editPost;
 window.post = post;
 window.selectImg = selectImg;
+window.searchPosts = searchPosts;

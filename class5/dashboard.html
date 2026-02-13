@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,7 +17,19 @@
       <nav class="navbar">
         <div class="container-fluid">
           <a class="navbar-brand" href="">Navbar</a>
-          <button class="btn btn-danger" onclick="logout()">Logout</button>
+          <div class="d-flex ms-auto" role="search">
+            <input 
+            id="searchValue"
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button onclick="searchPosts()" class="btn btn-outline-success">
+              Search
+            </button>
+          </div>
+          <button class="btn btn-danger ms-2" onclick="logout()">Logout</button>
         </div>
       </nav>
 
@@ -42,11 +54,36 @@
               ></textarea>
             </div>
             <div class="d-flex justify-content-around mb-2">
-              <img onclick="selectImg('./images/1.jpg')" class="bgImg" src="./images/1.jpg" alt="">
-              <img onclick="selectImg('./images/2.jpg')" class="bgImg" src="./images/2.jpg" alt="">
-              <img onclick="selectImg('./images/3.jpg')" class="bgImg" src="./images/3.jpg" alt="">
-              <img onclick="selectImg('./images/4.jpg')" class="bgImg" src="./images/4.jpg" alt="">
-              <img onclick="selectImg('./images/5.jpg')" class="bgImg" src="./images/5.jpg" alt="">
+              <img
+                onclick="selectImg('./images/1.jpg')"
+                class="bgImg"
+                src="./images/1.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/2.jpg')"
+                class="bgImg"
+                src="./images/2.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/3.jpg')"
+                class="bgImg"
+                src="./images/3.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/4.jpg')"
+                class="bgImg"
+                src="./images/4.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/5.jpg')"
+                class="bgImg"
+                src="./images/5.jpg"
+                alt=""
+              />
             </div>
             <div class="ms-auto">
               <button onclick="post()" type="submit" class="btn myBtn">
@@ -61,13 +98,8 @@
       </div>
     </div>
     <!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- <script src="https://unpkg.com/@supabase/supabase-js@2"></script> -->
-
-
-
-
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- <script src="https://unpkg.com/@supabase/supabase-js@2"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
