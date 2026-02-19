@@ -2,22 +2,26 @@ import supabase from "./supabase.js";
 var cardBg;
 var editId;
 
-
 async function searchPosts() {
-  let searchValue = document.getElementById("searchValue").value
+  let searchValue = document.getElementById("searchValue").value;
   var posts = document.getElementById("posts");
-  posts.innerHTML = "" // clear posts before displaying search results
+  posts.innerHTML = ""; // clear posts before displaying search results
   try {
-    let query = supabase.from("post").select("*").order('id', { ascending: false })
-    if(searchValue.trim()) {
-      // query = query.ilike("title",`%${searchValue}%`)    
-      query = query.or(`title.ilike.%${searchValue}%, description.ilike.%${searchValue}%`) 
+    let query = supabase
+      .from("post_duplicate")
+      .select("*")
+      .order("id", { ascending: false });
+    if (searchValue.trim()) {
+      // query = query.ilike("title",`%${searchValue}%`)
+      query = query.or(
+        `title.ilike.%${searchValue}%, description.ilike.%${searchValue}%`,
+      );
     }
-    const {data , error}= await query
+    const { data, error } = await query;
     console.log(data);
-    if(data.length===0){
-      posts.innerHTML= `<h4>No Posts Found </h4>`
-      alert("No posts found")
+    if (data.length === 0) {
+      posts.innerHTML = `<h4>No Posts Found </h4>`;
+      alert("No posts found");
     }
     data.forEach((post) => {
       var posts = document.getElementById("posts");
@@ -35,20 +39,19 @@ async function searchPosts() {
             </div>
             `;
     });
-    if(error)console.log("Search error",error);
-    
-    
-
+    if (error) console.log("Search error", error);
   } catch (error) {
     console.log(error);
-    
   }
 }
 
 //Get (fetch) all posts from supabase and display on page load
 window.addEventListener("DOMContentLoaded", async () => {
   try {
-    const { data, error } = await supabase.from("post").select("*").order('id', { ascending: false });
+    const { data, error } = await supabase
+      .from("post_duplicate")
+      .select("*")
+      .order("id", { ascending: false });
     console.log(data);
     data.forEach((post) => {
       var posts = document.getElementById("posts");
@@ -76,21 +79,31 @@ window.addEventListener("DOMContentLoaded", async () => {
 async function deletePost(event, id) {
   try {
     //Get Currently login user
-    const { data: { user },  error: userError} = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
     console.log(user);
-    
-    if(userError || !user){
+
+    if (userError || !user) {
       console.log("user Error", userError);
-      alert("Please login first to create a post!")
-      window.location.href = "/"
-   
+      alert("Please login first to create a post!");
+      window.location.href = "/";
     }
     //delete from supabase
-    const { data, error } = await supabase.from("post").delete().eq("id", id).eq("user_id", user.id).select();
+    const { data, error } = await supabase
+      .from("post_duplicate")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .select();
     console.log(event);
     if (error) console.log("delete error", error);
-    console.log("data",data);
-    
+    console.log("data", data);
+    if (data.length === 0 || !data) {
+      alert("You are not allowed to delete this post!");
+      return;
+    }
     console.log(event.target.parentNode.parentNode);
     var card = event.target.parentNode.parentNode;
     card.remove();
@@ -98,10 +111,42 @@ async function deletePost(event, id) {
     console.log(error);
   }
 }
-function editPost(event, id) {
+async function editPost(event, id) {
   var card = event.target.parentNode.parentNode;
   var title = card.childNodes[3].childNodes[1].innerHTML;
   var description = card.childNodes[3].childNodes[3].innerHTML;
+
+  // Get currently logged in user
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.log("User fetch error:", userError);
+    alert("You must login first!");
+    return;
+  }
+
+  //  If no user logged in, stop
+ 
+  const { data, error } = await supabase
+    .from("post_duplicate")
+    .update({ title, description, img_url: cardBg })
+    .eq("id", editId)
+    .eq("user_id", user.id)
+    .select(); 
+console.log(data);
+
+  // if (!data || data.length === 0) {
+  //   alert("You are not allowed to edit this post.");
+  //   return;
+  // }
+  if (error) {
+    console.log("Update error:", error);
+  } else {
+    console.log("Post updated successfully");
+  }
   document.getElementById("title").value = title;
   document.getElementById("description").value = description;
   card.remove();
@@ -113,35 +158,7 @@ async function post() {
   var description = document.getElementById("description").value;
   var posts = document.getElementById("posts");
   console.log(title, description);
- 
-  if (title.trim() && description.trim()) {
-    //Get Currently login user
-    const { data: { user },  error: userError} = await supabase.auth.getUser()
-    console.log(user);
-    
-    if(userError || !user){
-      console.log("user Error", userError);
-      alert("Please login first to create a post!")
-      window.location.href = "/"
-   
-    }
-    try {
-      if (editId) {
-        const { data, error } = await supabase
-          .from("post")
-          .update({ title, description, img_url: cardBg })
-          .eq("id",editId)
-          .select("*");
-          editId = null
-      } else {
-        const { data, error } = await supabase
-          .from("post")
-          .insert({ title, description, img_url: cardBg,"user_id": user.id })//Adding user id for post
-          .select("*");
-        console.log(data[0]);
-        if (error) console.log("Post error: ", error);
-      }
- posts.innerHTML += `<div class="card m-2">
+  posts.innerHTML += `<div class="card m-2">
               <div class="card-header">@Post</div>
               <div style="background-image: url(${cardBg});"  class="card-body">
                 <h5 class="card-title">${title}</h5>
@@ -152,7 +169,63 @@ async function post() {
                   <button onclick="deletePost()" class="btn btn-danger">Delete</button>
                </div>
             </div>`;
-      
+  if (title.trim() && description.trim()) {
+    try {
+      //  Get currently logged in user
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.log("User fetch error:", userError);
+        alert("You must login first!");
+        return;
+      }
+
+      //  If no user logged in, stop
+      if (!user) {
+        alert("You must login first!");
+        return;
+      }
+
+      if (editId) {
+        const { data, error } = await supabase
+          .from("post_duplicate")
+          .update({ title, description, img_url: cardBg })
+          .eq("id", editId)
+          .eq("user_id", user.id)
+          .select(); // VERY IMPORTANT (extra security)
+        console.log(data);
+        
+        // if (!data || data.length === 0) {
+        //   alert("You are not allowed to edit this post.");
+        //   return;
+        // }
+        // if (error) {
+        //   console.log("Update error:", error);
+        // } else {
+        //   console.log("Post updated successfully");
+        // }
+        editId = null; // reset edit mode
+      } else {
+        const { data, error } = await supabase
+          .from("post_duplicate")
+          .insert({
+            title,
+            description,
+            img_url: cardBg,
+            user_id: user.id, //  VERY IMPORTANT
+          })
+          .select("*");
+        console.log(data[0]);
+        if (error) {
+          console.log("Insert error:", error);
+        } else {
+          console.log("Post inserted successfully");
+        }
+      }
+
       document.getElementById("title").value = "";
       document.getElementById("description").value = "";
     } catch (error) {
