@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <nav class="navbar">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="">Navbar</a>
+          <button onclick="myPosts()" class="ms-auto btn btn-warning">
+              My Posts
+            </button>
+          <div class="d-flex ms-auto" role="search">
+            
+            <input 
+            id="searchValue"
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button onclick="searchPosts()" class="btn btn-outline-success">
+              Search
+            </button>
+          </div>
+          <button class="btn btn-danger ms-2" onclick="logout()">Logout</button>
+        </div>
+      </nav>
+
+      <div class="row">
+        <div class="col-4">
+          <div class="card p-2 m-2">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                aria-describedby="emailHelp"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="description"
+                rows="3"
+              ></textarea>
+            </div>
+             <div class="mb-3">
+              <label for="background-image" class="form-label">Upload Image</label>
+              <input
+                type="file"
+                class="form-control"
+                id="background-image"
+                accept="image/*"
+              />
+            </div>
+            <div class="d-flex justify-content-around mb-2">
+              <img
+                onclick="selectImg('https://ingjdyteycutgcfwghxt.supabase.co/storage/v1/object/public/background-images/1.jpg')"
+                class="bgImg"
+                src="https://ingjdyteycutgcfwghxt.supabase.co/storage/v1/object/public/background-images/1.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/2.jpg')"
+                class="bgImg"
+                src="./images/2.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/3.jpg')"
+                class="bgImg"
+                src="./images/3.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/4.jpg')"
+                class="bgImg"
+                src="./images/4.jpg"
+                alt=""
+              />
+              <img
+                onclick="selectImg('./images/5.jpg')"
+                class="bgImg"
+                src="./images/5.jpg"
+                alt=""
+              />
+            </div>
+            <div class="ms-auto">
+              <button onclick="post()" type="submit" class="btn myBtn">
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-8">
+          <div id="posts"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- <script src="https://unpkg.com/@supabase/supabase-js@2"></script> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
